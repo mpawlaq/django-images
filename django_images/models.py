@@ -44,9 +44,8 @@ else:
 
 
 class Image(models.Model):
-    image = models.ImageField(upload_to=upload_to,
-            height_field='height', width_field='width',
-            max_length=255, verbose_name=pgettext_lazy('Image Field', 'image'))
+    image = models.ImageField(upload_to=upload_to, height_field='height', width_field='width',max_length=255,
+                              verbose_name=pgettext_lazy('Image Field', 'image'))
     height = models.PositiveIntegerField(default=0, editable=False,
                                          verbose_name=pgettext_lazy('Image Field', 'height'))
     width = models.PositiveIntegerField(default=0, editable=False,
@@ -72,7 +71,7 @@ class ThumbnailManager(models.Manager):
     def get_or_create_at_size(self, image_id, size):
         image = Image.objects.get(id=image_id)
         if not size in IMAGE_SIZES:
-            raise ValueError("Received unknown size: %s" % size)
+            raise ValueError(pgettext_lazy('Thumbnail Manager', 'Received unknown size: %s' % size))
         try:
             thumbnail = image.get_by_size(size)
         except Thumbnail.DoesNotExist:
@@ -104,10 +103,10 @@ class ThumbnailManager(models.Manager):
 
 
 class Thumbnail(models.Model):
-    original = models.ForeignKey(Image, verbose_name=pgettext_lazy('Thumbnail Field', 'image'))
+    original = models.ForeignKey(Image, verbose_name=pgettext_lazy('Thumbnail Field', 'original'))
     image = models.ImageField(upload_to=upload_to,
             height_field='height', width_field='width',
-            max_length=255, verbose_name=pgettext_lazy('Thumbnail Field', 'Thumbnail'))
+            max_length=255, verbose_name=pgettext_lazy('Thumbnail Field', 'image'))
     size = models.CharField(max_length=100, verbose_name=pgettext_lazy('Thumbnail Field', 'size'))
     height = models.PositiveIntegerField(default=0, editable=False,
                                          verbose_name=pgettext_lazy('Thumbnail Field', 'height'))
@@ -118,7 +117,7 @@ class Thumbnail(models.Model):
 
     class Meta:
         unique_together = ('original', 'size')
-        verbose_name=pgettext_lazy('Thumbnail meta', 'Thumbnail')
+        verbose_name = pgettext_lazy('Thumbnail meta', 'Thumbnail')
         verbose_name_plural = pgettext_lazy('Thumbnail meta', 'Thumbnails')
 
     def get_absolute_url(self):
