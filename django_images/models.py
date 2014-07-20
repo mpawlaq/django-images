@@ -7,7 +7,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.urlresolvers import reverse
 from django.dispatch import receiver
 from django.utils.importlib import import_module
-from django.utils.translation import pgettext_lazy, ugettext_lazy as _
+from django.utils.translation import pgettext_lazy
 import PIL
 
 from . import utils
@@ -46,13 +46,15 @@ else:
 class Image(models.Model):
     image = models.ImageField(upload_to=upload_to,
             height_field='height', width_field='width',
-            max_length=255, verbose_name=pgettext_lazy('Image', 'image'))
-    height = models.PositiveIntegerField(default=0, editable=False, verbose_name=pgettext_lazy('Image', 'height'))
-    width = models.PositiveIntegerField(default=0, editable=False, verbose_name=pgettext_lazy('Image', 'width'))
+            max_length=255, verbose_name=pgettext_lazy('Image Field', 'image'))
+    height = models.PositiveIntegerField(default=0, editable=False,
+                                         verbose_name=pgettext_lazy('Image Field', 'height'))
+    width = models.PositiveIntegerField(default=0, editable=False,
+                                        verbose_name=pgettext_lazy('Image Field', 'width'))
 
     class Meta:
-        verbose_name = _('Image')
-        verbose_name_plural = _('Images')
+        verbose_name = pgettext_lazy('Image meta', 'Image')
+        verbose_name_plural = pgettext_lazy('Image meta', 'Images')
 
     def get_by_size(self, size):
         return self.thumbnail_set.get(size=size)
@@ -102,20 +104,22 @@ class ThumbnailManager(models.Manager):
 
 
 class Thumbnail(models.Model):
-    original = models.ForeignKey(Image)
+    original = models.ForeignKey(Image, verbose_name=pgettext_lazy('Thumbnail Field', 'image'))
     image = models.ImageField(upload_to=upload_to,
             height_field='height', width_field='width',
-            max_length=255, verbose_name=pgettext_lazy('Thumbnail', 'image'))
-    size = models.CharField(max_length=100, verbose_name=pgettext_lazy('Thumbnail', 'size'))
-    height = models.PositiveIntegerField(default=0, editable=False, verbose_name=pgettext_lazy('Thumbnail', 'height'))
-    width = models.PositiveIntegerField(default=0, editable=False, verbose_name=pgettext_lazy('Thumbnail', 'width'))
+            max_length=255, verbose_name=pgettext_lazy('Thumbnail Field', 'Thumbnail'))
+    size = models.CharField(max_length=100, verbose_name=pgettext_lazy('Thumbnail Field', 'size'))
+    height = models.PositiveIntegerField(default=0, editable=False,
+                                         verbose_name=pgettext_lazy('Thumbnail Field', 'height'))
+    width = models.PositiveIntegerField(default=0, editable=False,
+                                        verbose_name=pgettext_lazy('Thumbnail Field', 'width'))
     
     objects = ThumbnailManager()
 
     class Meta:
         unique_together = ('original', 'size')
-        verbose_name = _('Thumbnail')
-        verbose_name_plural = _('thumbnails')
+        verbose_name=pgettext_lazy('Thumbnail meta', 'Thumbnail')
+        verbose_name_plural = pgettext_lazy('Thumbnail meta', 'Thumbnails')
 
     def get_absolute_url(self):
         return self.image.url
